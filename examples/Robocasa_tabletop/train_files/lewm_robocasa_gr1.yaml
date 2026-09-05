@@ -1,0 +1,48 @@
+run_id: lewm_robocasa_gr1_ot_to_ot16_dim256
+run_root_dir: /root/tianyi/LDA-1B/playground/Pretrained_models/LeWM
+seed: 42
+
+model:
+  image_size: 224
+  patch_size: 16
+  lewm_dim: 256
+  action_dim: 29
+  action_horizon: 16
+  pretrained_vit_path: /root/tianyi/LDA-1B/playground/Pretrained_models/vit-tiny-patch16-224
+  predictor_depth: 6
+  predictor_heads: 4
+  predictor_dim_head: 64
+  predictor_dropout: 0.1
+
+loss:
+  sigreg_weight: 0.09
+
+datasets:
+  vla_data:
+    dataset_py: lerobot_datasets
+    data_root_dir: /root/tianyi/LDA-1B/playground/Datasets/nvidia/PhysicalAI-Robotics-GR00T-X-Embodiment-Sim
+    data_mix: fourier_gr1_unified_1000_lewm
+    action_type: delta_ee
+    per_device_batch_size: 64
+    num_workers: 8
+    prefetch_factor: 2
+    include_state: false
+    delete_pause_frame: false
+    use_delta_action: false
+    video_backend: torchvision_av
+
+trainer:
+  max_train_steps: 100000
+  num_warmup_steps: 5000
+  save_interval: 5000
+  logging_frequency: 50
+  learning_rate: 5.0e-5
+  lr_scheduler_type: cosine
+  weight_decay: 1.0e-3
+  betas:
+  - 0.9
+  - 0.95
+  eps: 1.0e-8
+  max_grad_norm: 1.0
+  gradient_accumulation_steps: 1
+  mixed_precision: bf16

@@ -1,0 +1,38 @@
+server:
+  host: 127.0.0.1
+  port: 10093
+  unnorm_key: new_embodiment
+  request_timeout_s: 1.0
+  # Replan before the 50-step chunk runs out. Returned actions corresponding
+  # to elapsed inference time are skipped instead of being executed late.
+  replan_interval_steps: 35
+  max_inference_latency_s: 0.9
+  task: "Pull out the left‑side USB plug, then insert it into the right side."
+
+robot:
+  fps: 50
+  feedback_topic: /info/joint_feedback
+  left_arm_command_topic: /control/joint_cmd_A
+  right_arm_command_topic: /control/joint_cmd_B
+  right_gripper_command_topic: /control/gripperValueR
+  initial_right_gripper: 0.0
+  max_joint_delta_per_step: 0.1
+  max_feedback_age_s: 0.25
+  max_camera_age_s: 0.5
+  startup_timeout_s: 10.0
+
+# Order is part of the trained model contract. crop_tlhw means
+# [top, left, height, width] and matches the data-collection configuration.
+cameras:
+  - name: overhead
+    topic: /overhead/color/image_raw/compressed
+    source_hw: [480, 640]
+    crop_tlhw: [195, 375, 285, 265]
+  - name: waist
+    topic: /waist/color/image_raw/compressed
+    source_hw: [720, 1280]
+    crop_tlhw: [60, 580, 560, 580]
+  - name: wrist_right
+    topic: /wrist_right/color/image_raw/compressed
+    source_hw: [720, 1280]
+    crop_tlhw: [240, 290, 480, 750]
