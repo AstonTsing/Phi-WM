@@ -10,14 +10,14 @@ NODE_RANK=${NODE_RANK:-0}
 MASTER_ADDR=${MASTER_ADDR:-127.0.0.1}
 MASTER_PORT=${MASTER_PORT:-29500}
 
-LDA_VENV=${LDA_VENV:-/root/tianyi/code/LDA-1B/.venv}
-STARVLA_ROOT=${STARVLA_ROOT:-/root/tianyi/code/starVLA}
+LDA_VENV=${LDA_VENV:-/root/htq/code/LDA-1B/.venv}
+STARVLA_ROOT=${STARVLA_ROOT:-/root/htq/code/starVLA}
 
-export HF_HOME=${HF_HOME:-/root/tianyi/.cache/huggingface}
-export HF_HUB_CACHE=${HF_HUB_CACHE:-/root/tianyi/.cache/huggingface/hub}
-export TMPDIR=${TMPDIR:-/root/tianyi/.cache/tmp/starvla_acteffect}
-export TRITON_CACHE_DIR=${TRITON_CACHE_DIR:-/root/tianyi/.cache/triton/starvla_acteffect}
-export TORCH_EXTENSIONS_DIR=${TORCH_EXTENSIONS_DIR:-/root/tianyi/.cache/torch_extensions/starvla_acteffect}
+export HF_HOME=${HF_HOME:-/root/htq/.cache/huggingface}
+export HF_HUB_CACHE=${HF_HUB_CACHE:-/root/htq/.cache/huggingface/hub}
+export TMPDIR=${TMPDIR:-/root/htq/.cache/tmp/starvla_acteffect}
+export TRITON_CACHE_DIR=${TRITON_CACHE_DIR:-/root/htq/.cache/triton/starvla_acteffect}
+export TORCH_EXTENSIONS_DIR=${TORCH_EXTENSIONS_DIR:-/root/htq/.cache/torch_extensions/starvla_acteffect}
 mkdir -p "${HF_HUB_CACHE}" "${TMPDIR}" "${TRITON_CACHE_DIR}" "${TORCH_EXTENSIONS_DIR}"
 
 export PATH="${LDA_VENV}/bin:${PATH}"
@@ -38,11 +38,11 @@ EVAL_INTERVAL=${EVAL_INTERVAL:-100}
 RESUME=${RESUME:-false}
 
 Framework_name=${Framework_name:-ActEffect}
-base_vlm=${base_vlm:-/root/tianyi/starVLA/playground/Pretrained_models/Qwen3-VL-4B-Instruct-Action}
-dino_model_path=${dino_model_path:-/root/tianyi/LDA-1B/playground/Pretrained_models/dinov3-vits16-pretrain-lvd1689m}
+base_vlm=${base_vlm:-/root/htq/starVLA/playground/Pretrained_models/Qwen3-VL-4B-Instruct-Action}
+dino_model_path=${dino_model_path:-/root/htq/starVLA/playground/Pretrained_models/dinov3-vits16-pretrain-lvd1689m}
 config_yaml=${config_yaml:-examples/LIBERO/train_files/starvla_acteffect_libero.yaml}
 
-data_root_dir=${data_root_dir:-/root/tianyi/starVLA/playground/Datasets/LEROBOT_LIBERO_DATA}
+data_root_dir=${data_root_dir:-/root/htq/starVLA/playground/Datasets/LEROBOT_LIBERO_DATA}
 data_mix=${data_mix:-libero_all_video_fdm}
 
 action_dim=${action_dim:-7}
@@ -69,7 +69,7 @@ FDM_MAX_PATCHES=${FDM_MAX_PATCHES:-2048}
 FDM_CONDITION_NUM_IMAGES=${FDM_CONDITION_NUM_IMAGES:-2}
 
 freeze_module_list=${freeze_module_list:-dino_model}
-run_root_dir=${run_root_dir:-/root/tianyi/starVLA/playground/Checkpoints/libero}
+run_root_dir=${run_root_dir:-/root/htq/starVLA/playground/Checkpoints/libero}
 run_id=${run_id:-libero_acteffect}
 
 export WANDB_MODE=${WANDB_MODE:-online}

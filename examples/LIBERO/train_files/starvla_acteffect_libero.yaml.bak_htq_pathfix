@@ -1,5 +1,5 @@
-run_id: libero_acteffect_state
-run_root_dir: /root/htq/starVLA/playground/Checkpoints/libero
+run_id: libero_acteffect
+run_root_dir: /root/tianyi/starVLA/playground/Checkpoints/libero
 seed: 42
 trackers:
 - jsonl
@@ -12,12 +12,12 @@ version_id: "0.21"
 framework:
   name: ActEffect
   qwenvl:
-    base_vlm: /root/htq/starVLA/playground/Pretrained_models/Qwen3-VL-4B-Instruct-Action
+    base_vlm: /root/tianyi/starVLA/playground/Pretrained_models/Qwen3-VL-4B-Instruct-Action
     attn_implementation: flash_attention_2
     vl_hidden_dim: 2048
   dinov3:
     enabled: true
-    model_path: /root/htq/starVLA/playground/Pretrained_models/dinov3-vits16-pretrain-lvd1689m
+    model_path: /root/tianyi/LDA-1B/playground/Pretrained_models/dinov3-vits16-pretrain-lvd1689m
     freeze_dino: true
     input_size: [224, 224]
     include_cls_token: false
@@ -50,7 +50,7 @@ framework:
     add_pos_embed: true
     max_seq_len: 1024
     action_dim: 7
-    state_dim: 7
+    state_dim: 0
     action_horizon: 8
     future_action_window_size: 7
     past_action_window_size: 0
@@ -76,14 +76,14 @@ framework:
 datasets:
   vla_data:
     dataset_py: lerobot_datasets
-    data_root_dir: /root/htq/starVLA/playground/Datasets/LEROBOT_LIBERO_DATA
+    data_root_dir: /root/tianyi/starVLA/playground/Datasets/LEROBOT_LIBERO_DATA
     data_mix: libero_all_video_fdm
     action_type: delta_qpos
     sequential_step_sampling: false
     CoT_prompt: "Your task is {instruction}. To identify the key objects for your task. Locate their bounding boxes in [x1,y1,x2,y2] format."
     per_device_batch_size: 16
     load_all_data_for_training: true
-    include_state: true
+    include_state: false
     delete_pause_frame: false
     video_backend: torchvision_av
 
