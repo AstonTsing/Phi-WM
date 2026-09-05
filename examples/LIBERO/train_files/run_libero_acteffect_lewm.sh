@@ -10,7 +10,7 @@ NODE_RANK=${NODE_RANK:-0}
 MASTER_ADDR=${MASTER_ADDR:-127.0.0.1}
 MASTER_PORT=${MASTER_PORT:-29500}
 
-LDA_VENV=${LDA_VENV:-/root/htq/code/LDA-1B/.venv}
+LDA_VENV=${LDA_VENV:-/root/htq/code/starVLA/.venv}
 STARVLA_ROOT=${STARVLA_ROOT:-/root/htq/code/starVLA}
 
 export HF_HOME=${HF_HOME:-/root/htq/.cache/huggingface}
