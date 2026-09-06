@@ -10,8 +10,8 @@ NODE_RANK=${NODE_RANK:-0}
 MASTER_ADDR=${MASTER_ADDR:-127.0.0.1}
 MASTER_PORT=${MASTER_PORT:-29500}
 
-LDA_VENV=${LDA_VENV:-/root/htq/code/starVLA/.venv}
-STARVLA_ROOT=${STARVLA_ROOT:-/root/htq/code/starVLA}
+LDA_VENV=${LDA_VENV:-/root/htq/code/starVLA/.venv} # 指定 Python 环境
+STARVLA_ROOT=${STARVLA_ROOT:-/root/htq/code/starVLA} # 指定项目代码根目录
 
 export HF_HOME=${HF_HOME:-/root/htq/.cache/huggingface}
 export HF_HUB_CACHE=${HF_HUB_CACHE:-/root/htq/.cache/huggingface/hub}
