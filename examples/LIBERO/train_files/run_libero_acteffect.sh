@@ -29,20 +29,20 @@ export NCCL_BLOCKING_WAIT=${NCCL_BLOCKING_WAIT:-1}
 export NCCL_ASYNC_ERROR_HANDLING=${NCCL_ASYNC_ERROR_HANDLING:-1}
 export NCCL_TIMEOUT=${NCCL_TIMEOUT:-1000}
 
-PER_DEVICE_BATCH_SIZE=${PER_DEVICE_BATCH_SIZE:-16}
+PER_DEVICE_BATCH_SIZE=${PER_DEVICE_BATCH_SIZE:-16} # 控制 batch size
 LOAD_ALL_DATA_FOR_TRAINING=${LOAD_ALL_DATA_FOR_TRAINING:-true}
-MAX_TRAIN_STEPS=${MAX_TRAIN_STEPS:-100000}
-SAVE_INTERVAL=${SAVE_INTERVAL:-10000}
+MAX_TRAIN_STEPS=${MAX_TRAIN_STEPS:-100000} # 控制训练部署
+SAVE_INTERVAL=${SAVE_INTERVAL:-10000} # 控制保存频率
 LOGGING_FREQUENCY=${LOGGING_FREQUENCY:-100}
 EVAL_INTERVAL=${EVAL_INTERVAL:-100}
 RESUME=${RESUME:-false}
 
-Framework_name=${Framework_name:-ActEffect}
-base_vlm=${base_vlm:-/root/htq/starVLA/playground/Pretrained_models/Qwen3-VL-4B-Instruct-Action}
-dino_model_path=${dino_model_path:-/root/htq/starVLA/playground/Pretrained_models/dinov3-vits16-pretrain-lvd1689m}
+Framework_name=${Framework_name:-ActEffect} # 指定要用的模型框架是 ActEffect
+base_vlm=${base_vlm:-/root/htq/starVLA/playground/Pretrained_models/Qwen3-VL-4B-Instruct-Action} # 指定基础 VLM 目录
+dino_model_path=${dino_model_path:-/root/htq/starVLA/playground/Pretrained_models/dinov3-vits16-pretrain-lvd1689m} # 指定 DINO 模型目录
 config_yaml=${config_yaml:-examples/LIBERO/train_files/starvla_acteffect_libero.yaml}
 
-data_root_dir=${data_root_dir:-/root/htq/starVLA/playground/Datasets/LEROBOT_LIBERO_DATA}
+data_root_dir=${data_root_dir:-/root/htq/starVLA/playground/Datasets/LEROBOT_LIBERO_DATA} # 指定 LIBERO 数据集目录
 data_mix=${data_mix:-libero_all_video_fdm}
 
 action_dim=${action_dim:-7}
@@ -69,7 +69,7 @@ FDM_MAX_PATCHES=${FDM_MAX_PATCHES:-2048}
 FDM_CONDITION_NUM_IMAGES=${FDM_CONDITION_NUM_IMAGES:-2}
 
 freeze_module_list=${freeze_module_list:-dino_model}
-run_root_dir=${run_root_dir:-/root/htq/starVLA/playground/Checkpoints/libero}
+run_root_dir=${run_root_dir:-/root/htq/starVLA/playground/Checkpoints/libero} # 指定实验输出目录
 run_id=${run_id:-libero_acteffect}
 
 export WANDB_MODE=${WANDB_MODE:-online}
@@ -144,7 +144,7 @@ if [[ "${RESUME}" == "true" ]]; then
 else
   TEE_MODE=""
 fi
-
+# 真正启动训练的地方；前面所有变量最终都会传给这里
 accelerate launch \
   --config_file starVLA/config/deepseeds/deepspeed_zero2.yaml \
   --num_machines "${NNODES}" \
