@@ -12,7 +12,7 @@ import torch.nn.functional as F
 
 from starVLA.model.framework.VLM4A.QwenMIPDINO import _cfg_get
 from starVLA.model.framework.VLM4A.QwenMIPDINOFDM import _cfg_get_bool
-from starVLA.model.framework.VLM4A.QwenOFTMIPDINOFDM import (
+from starVLA.model.framework.VLM4A.QwenOFTMIPDINOFDM import ( # QwenOFTMIPDINOFDM = Qwen + OFT action token + MIP + DINO + FDM
     QwenOFTMIPDINOFDMDefaultConfig,
     Qwen_OFT_MIP_DINO_FDM,
 )
@@ -32,7 +32,7 @@ class QwenOFTMIPDINOFDMDirectRankDefaultConfig(QwenOFTMIPDINOFDMDefaultConfig):
             "fdm_recon_weight": 0.1,
             "fdm_rank_weight": 0.1,
             "fdm_rank_margin": 0.0,
-            "fdm_rank_tau": 0.1,
+            "fdm_rank_tau": 0.1, # 温度系数
         }
     )
 
@@ -63,19 +63,19 @@ def three_level_fdm_loss(
     direct_recon = direct_dist.mean()
     stage0_recon = stage0_dist.mean()
     stage1_recon = stage1_dist.mean()
-    rank_stage1_stage0 = F.softplus(
+    rank_stage1_stage0 = F.softplus( # L_rank_10
         (stage1_dist - stage0_dist.detach() + float(stage1_rank_margin)) / float(stage1_rank_tau)
     ).mean()
-    rank_stage0_direct = F.softplus(
+    rank_stage0_direct = F.softplus( # L_rank_0d
         (stage0_dist - direct_dist.detach() + float(stage0_rank_margin)) / float(stage0_rank_tau)
     ).mean()
 
     total = (
-        stage1_recon
-        + float(stage0_weight) * stage0_recon
-        + float(direct_recon_weight) * direct_recon
-        + float(stage1_rank_weight) * rank_stage1_stage0
-        + float(stage0_rank_weight) * rank_stage0_direct
+        stage1_recon # L_pred_1
+        + float(stage0_weight) * stage0_recon # L_pred_0
+        + float(direct_recon_weight) * direct_recon # L_pred_d
+        + float(stage1_rank_weight) * rank_stage1_stage0 # L_rank_10
+        + float(stage0_rank_weight) * rank_stage0_direct # L_rank_0d
     )
     return total, {
         "fdm_loss": total,
@@ -112,14 +112,14 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
         qwen_hidden_dim = int(self.qwen_vl_interface.model.config.hidden_size)
         direct_hidden_dim = int(_cfg_get(self.direct_action_cfg, "hidden_dim", 1024))
         action_dim = int(self.config.framework.action_model.action_dim)
-        self.direct_action_head = nn.Sequential(
+        self.direct_action_head = nn.Sequential( # 接在 Qwen 后面的 MLP -> a^ff
             nn.LayerNorm(qwen_hidden_dim),
             nn.Linear(qwen_hidden_dim, direct_hidden_dim),
             nn.GELU(),
             nn.Linear(direct_hidden_dim, action_dim),
         )
 
-    def _encode_qwen_with_action_queries(self, batch_images, instructions):
+    def _encode_qwen_with_action_queries(self, batch_images, instructions): # 图片 + 指令 -> Qwen -> 抽出 action tokens
         instructions = self._append_oft_action_prompt(instructions)
         qwen_inputs = self.qwen_vl_interface.build_qwenvl_inputs(
             images=batch_images,
@@ -158,7 +158,7 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
         )
         return last_hidden, attention_mask
 
-    def _gather_action_queries(self, last_hidden: torch.Tensor, input_ids: torch.Tensor) -> torch.Tensor:
+    def _gather_action_queries(self, last_hidden: torch.Tensor, input_ids: torch.Tensor) -> torch.Tensor: # 抽取 action tokens 的函数
         mask = input_ids == self.action_token_id
         counts = mask.sum(dim=1)
         if (counts < self.chunk_len).any():
@@ -354,7 +354,7 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
                 encoder_attention_mask=condition_mask,
             )
             head_dtype = next(self.direct_action_head.parameters()).dtype
-            direct_actions = self.direct_action_head(action_queries.to(dtype=head_dtype))
+            direct_actions = self.direct_action_head(action_queries.to(dtype=head_dtype)) # 生成 a^ff
             direct_action_loss = F.l1_loss(direct_actions.float(), actions_target.float())
 
         fdm_loss, fdm_metrics = self._compute_ranked_fdm_loss(
