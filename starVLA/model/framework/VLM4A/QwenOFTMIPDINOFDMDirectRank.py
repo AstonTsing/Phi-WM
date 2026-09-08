@@ -37,7 +37,7 @@ class QwenOFTMIPDINOFDMDirectRankDefaultConfig(QwenOFTMIPDINOFDMDefaultConfig):
     )
 
 
-def three_level_fdm_loss(
+def three_level_fdm_loss( # 计算 FDM 的 pred loss、rank loss
     pred_direct: torch.Tensor,
     pred_stage0: torch.Tensor,
     pred_stage1: torch.Tensor,
@@ -171,13 +171,13 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
         gather_index = selected.unsqueeze(-1).expand(-1, -1, last_hidden.shape[-1])
         return last_hidden.gather(dim=1, index=gather_index)
 
-    def _build_ranked_action_condition(self, batch_images, instructions):
+    def _build_ranked_action_condition(self, batch_images, instructions): # 构造给 action head 使用的 condition tokens 等
         batch_images = self._select_current_condition_images(batch_images)
-        qwen_tokens, qwen_mask, action_queries = self._encode_qwen_with_action_queries(
+        qwen_tokens, qwen_mask, action_queries = self._encode_qwen_with_action_queries( # 把当前 image 和 instruction 输入进 Qwen 得到 action tokens
             batch_images,
             instructions,
         )
-        raw_dino_tokens, dino_condition_tokens, patch_indices = self._encode_dino_raw_and_condition(
+        raw_dino_tokens, dino_condition_tokens, patch_indices = self._encode_dino_raw_and_condition( # DINO 编码
             batch_images,
             qwen_tokens.device,
             qwen_tokens.dtype,
@@ -194,14 +194,14 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
             dtype=torch.bool,
         )
         return (
-            condition_tokens,
+            condition_tokens, # task tokens
             torch.cat([qwen_mask, dino_mask], dim=1),
-            raw_dino_tokens,
+            raw_dino_tokens, # 当前图像的 DINO 表征
             patch_indices,
-            action_queries,
+            action_queries, # action tokens（用于生成 a^ff）
         )
 
-    def _compute_ranked_fdm_loss(
+    def _compute_ranked_fdm_loss( # 计算 FDM 的 pred loss 和 rank loss
         self,
         action_output,
         direct_actions: torch.Tensor,
@@ -267,19 +267,19 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
         for horizon in range(num_horizons):
             horizon_index = None if target_tokens.ndim == 3 else horizon
             target = target_tokens if target_tokens.ndim == 3 else target_tokens[:, horizon]
-            pred_direct = self.fdm_predictor(
+            pred_direct = self.fdm_predictor( # FDM 预测未来 hidden states
                 current_tokens,
                 direct_actions,
                 patch_indices=patch_indices,
                 horizon_indices=horizon_index,
             )
-            pred_stage0 = self.fdm_predictor(
+            pred_stage0 = self.fdm_predictor( # FDM 预测未来 hidden states
                 current_tokens,
                 stage0_actions,
                 patch_indices=patch_indices,
                 horizon_indices=horizon_index,
             )
-            pred_stage1 = self.fdm_predictor(
+            pred_stage1 = self.fdm_predictor( # FDM 预测未来 hidden states
                 current_tokens,
                 stage1_actions,
                 patch_indices=patch_indices,
@@ -313,7 +313,7 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
             dtype=action_output["loss"].dtype,
         ), metrics
 
-    def forward(self, examples: List[dict] = None, **kwargs) -> Tuple:
+    def forward(self, examples: List[dict] = None, **kwargs) -> Tuple: # forwward 主流程
         batch_images = [example["image"] for example in examples]
         future_images = [example.get("future_image", None) for example in examples]
         if any(images is None or len(images) == 0 for images in future_images):
@@ -324,10 +324,10 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
         use_state = getattr(self.action_model, "state_encoder", None) is not None
         state = [example["state"] for example in examples] if use_state and "state" in examples[0] else None
 
-        condition_tokens, condition_mask, current_dino_tokens, patch_indices, action_queries = (
+        condition_tokens, condition_mask, current_dino_tokens, patch_indices, action_queries = ( # 构造给 action head 使用的 condition tokens 等
             self._build_ranked_action_condition(batch_images, instructions)
         )
-        target_future_dino_tokens, future_patch_indices = self._encode_future_dino_tokens_for_fdm(
+        target_future_dino_tokens, future_patch_indices = self._encode_future_dino_tokens_for_fdm( # 编码 future images 得到 FDM 的监督目标
             future_images,
             condition_tokens.device,
             condition_tokens.dtype,
@@ -347,17 +347,17 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
                 if state is not None
                 else None
             )
-            action_output = self.action_model(
+            action_output = self.action_model( # MIP 预测 a^0 和 a^1
                 condition_tokens,
                 actions_target,
                 state_tensor,
                 encoder_attention_mask=condition_mask,
             )
             head_dtype = next(self.direct_action_head.parameters()).dtype
-            direct_actions = self.direct_action_head(action_queries.to(dtype=head_dtype)) # 生成 a^ff
-            direct_action_loss = F.l1_loss(direct_actions.float(), actions_target.float())
+            direct_actions = self.direct_action_head(action_queries.to(dtype=head_dtype)) # 预测 a^ff
+            direct_action_loss = F.l1_loss(direct_actions.float(), actions_target.float()) # 计算 L_ff
 
-        fdm_loss, fdm_metrics = self._compute_ranked_fdm_loss(
+        fdm_loss, fdm_metrics = self._compute_ranked_fdm_loss( # 计算 FDM 的 pred loss 和 rank loss
             action_output,
             direct_actions,
             current_dino_tokens,
@@ -370,7 +370,7 @@ class Qwen_OFT_MIP_DINO_FDM_DirectRank(Qwen_OFT_MIP_DINO_FDM):
             + self.fdm_loss_weight * fdm_loss
         )
         output = {
-            "action_loss": total_loss,
+            "action_loss": total_loss, # 总 loss（虽然名字叫做 action_loss）
             "raw_action_loss": action_output["action_loss"].detach(),
             "direct_action_l1": direct_action_loss.detach(),
             "mip_action_loss0": action_output["mip_action_loss0"].detach(),
