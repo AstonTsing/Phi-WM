@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-STARVLA_DIR=${STARVLA_DIR:-/root/tianyi/code/starVLA}
-LIBERO_PLUS_HOME=${LIBERO_PLUS_HOME:-/root/tianyi/code/LIBERO-plus}
+STARVLA_DIR=${STARVLA_DIR:-/root/htq/code/starVLA}
+LIBERO_PLUS_HOME=${LIBERO_PLUS_HOME:-/root/htq/code/LIBERO-plus}
 LIBERO_PLUS_PYTHON=${LIBERO_PLUS_PYTHON:-${LIBERO_PLUS_HOME}/.venv/bin/python}
-STARVLA_PYTHON=${STARVLA_PYTHON:-/root/tianyi/code/LDA-1B/.venv/bin/python}
+STARVLA_PYTHON=${STARVLA_PYTHON:-/root/htq/code/LDA-1B/.venv/bin/python}
 
-DEFAULT_CKPT=/root/tianyi/starVLA/playground/Pretrained_models/Qwen3-VL-OFT-LIBERO-4in1/checkpoints/steps_50000_pytorch_model.pt
+DEFAULT_CKPT=/root/htq/starVLA/playground/Checkpoints/libero/libero_qwenoft_mip_dino_fdm_state7_100k/checkpoints/steps_60000_pytorch_model.pt
 
 ckpt=${1:-${CKPT:-${DEFAULT_CKPT}}}
 task_suite_name=${2:-${TASK_SUITE_NAME:-libero_spatial}}
@@ -18,6 +18,7 @@ output_dir=${7:-${OUTPUT_DIR:-}}
 
 host=${HOST:-127.0.0.1}
 num_trials_per_task=${NUM_TRIALS_PER_TASK:-1}
+eval_seed=${LIBERO_EVAL_SEED:-${SEED:-7}}
 server_wait_timeout=${SERVER_WAIT_TIMEOUT:-900}
 unnorm_key=${UNNORM_KEY:-franka}
 image_history=${IMAGE_HISTORY:--1}
@@ -108,6 +109,7 @@ echo " task slice      : [${start_idx}, ${end_idx})"
 echo " GPU             : ${gpu_id}"
 echo " port            : ${base_port}"
 echo " trials/task     : ${num_trials_per_task}"
+echo " seed            : ${eval_seed}"
 echo " save videos     : ${save_videos}"
 echo " use state       : ${use_state}"
 echo " output dir      : ${output_dir}"
@@ -120,6 +122,7 @@ env "${STANDALONE_ENV_CLEANUP[@]}" \
     "${STARVLA_PYTHON}" deployment/model_server/server_policy.py \
     --ckpt_path "${ckpt}" \
     --port "${base_port}" \
+    --seed "${eval_seed}" \
     --use_bf16 \
     > "${server_log}" 2>&1 &
 server_pid=$!
@@ -147,6 +150,7 @@ eval_args=(
     --args.port "${base_port}" \
     --args.task-suite-name "${task_suite_name}" \
     --args.num-trials-per-task "${num_trials_per_task}" \
+    --args.seed "${eval_seed}" \
     --args.start-idx "${start_idx}" \
     --args.end-idx "${end_idx}" \
     --args.output-dir "${output_dir}" \

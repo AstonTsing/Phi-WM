@@ -5,9 +5,9 @@ set -euo pipefail
 # Environment Configuration
 # ============================================================
 
-STARVLA_ROOT=/root/tianyi/code/starVLA
-starVLA_PYTHON=/root/tianyi/code/LDA-1B/.venv/bin/python
-ROBOCASA_PYTHON=/root/tianyi/code/robocasa-gr1-tabletop-tasks/.venv/bin/python
+STARVLA_ROOT=/root/htq/code/starVLA
+starVLA_PYTHON=/root/htq/code/LDA-1B/.venv/bin/python
+ROBOCASA_PYTHON=/root/htq/code/robocasa-gr1-tabletop-tasks/.venv/bin/python
 export PYTHONPATH="${STARVLA_ROOT}:${PYTHONPATH:-}"
 export MUJOCO_GL=egl
 export PYOPENGL_PLATFORM=egl
@@ -30,11 +30,11 @@ STANDALONE_ENV_CLEANUP=(
 # ============================================================
 # Default Arguments
 # ============================================================
-# CKPT_DEFAULT=/root/tianyi/LDA-1B/playground/Checkpoints/robocasa/robocasa_cosmopredict2_oft/checkpoints/steps_150000_pytorch_model.pt
-# CKPT_DEFAULT=/root/tianyi/LDA-1B/playground/Checkpoints/robocasa/robocasa_cosmopredict2_oft_video_fdm/checkpoints/steps_150000_pytorch_model.pt
-CKPT_DEFAULT=/root/tianyi/starVLA/playground/Checkpoints/robocasa/robocasa_cosmogr00t2wam_224x384/checkpoints/steps_150000_pytorch_model.pt
-# CKPT_DEFAULT=/root/tianyi/starVLA/playground/Checkpoints/robocasa/robocasa_cosmogr00t2wam_fdm/checkpoints/steps_200000_pytorch_model.pt
-# CKPT_DEFAULT=/root/tianyi/starVLA/playground/Pretrained_models/Qwen3-VL-GR00T-Robocasa-gr1/checkpoints/steps_90000_pytorch_model.pt
+# CKPT_DEFAULT=/root/htq/LDA-1B/playground/Checkpoints/robocasa/robocasa_cosmopredict2_oft/checkpoints/steps_150000_pytorch_model.pt
+# CKPT_DEFAULT=/root/htq/LDA-1B/playground/Checkpoints/robocasa/robocasa_cosmopredict2_oft_video_fdm/checkpoints/steps_150000_pytorch_model.pt
+CKPT_DEFAULT=/root/htq/starVLA/playground/Checkpoints/robocasa/robocasa_qwenoft_mip_dino_fdm_direct_rank_state58_200k/checkpoints/steps_180000_pytorch_model.pt
+# CKPT_DEFAULT=/root/htq/starVLA/playground/Checkpoints/robocasa/robocasa_cosmogr00t2wam_fdm/checkpoints/steps_200000_pytorch_model.pt
+# CKPT_DEFAULT=/root/htq/starVLA/playground/Pretrained_models/Qwen3-VL-GR00T-Robocasa-gr1/checkpoints/steps_90000_pytorch_model.pt
 N_ENVS_DEFAULT=1
 MAX_EPISODE_STEPS_DEFAULT=720
 N_ACTION_STEPS_DEFAULT=12
@@ -44,7 +44,7 @@ STATE_DELTA_INDICES=${STATE_DELTA_INDICES:-"${VIDEO_DELTA_INDICES}"}
 RETRY_MISSING=${RETRY_MISSING:-true}
 RETRY_ATTEMPTS=${RETRY_ATTEMPTS:-1}
 RETRY_N_ENVS=${RETRY_N_ENVS:-1}
-EVAL_SEED=${ROBOCASA_EVAL_SEED:-7}
+EVAL_SEED=${ROBOCASA_EVAL_SEED:-2}
 if [[ ! "${EVAL_SEED}" =~ ^[0-9]+$ ]]; then
     echo "ROBOCASA_EVAL_SEED must be a non-negative integer, got: ${EVAL_SEED}" >&2
     exit 2

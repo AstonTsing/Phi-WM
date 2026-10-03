@@ -7,12 +7,12 @@ set -euo pipefail
 #   3. run LIBERO evaluation
 #   4. always stop the policy server
 
-STARVLA_DIR=${STARVLA_DIR:-/root/tianyi/code/starVLA}
-LIBERO_HOME=${LIBERO_HOME:-/root/tianyi/code/LIBERO}
-starVLA_python=${starVLA_python:-/root/tianyi/code/LDA-1B/.venv/bin/python}
-LIBERO_python=${LIBERO_python:-/root/tianyi/code/LIBERO/.venv/bin/python}
+STARVLA_DIR=${STARVLA_DIR:-/root/htq/code/starVLA}
+LIBERO_HOME=${LIBERO_HOME:-/root/htq/code/LIBERO}
+starVLA_python=${starVLA_python:-/root/htq/code/LDA-1B/.venv/bin/python}
+LIBERO_python=${LIBERO_python:-/root/htq/code/LIBERO/.venv/bin/python}
 
-DEFAULT_CKPT=/root/tianyi/starVLA/playground/Pretrained_models/Qwen3-VL-OFT-LIBERO-4in1/checkpoints/steps_50000_pytorch_model.pt
+DEFAULT_CKPT=/root/htq/starVLA/playground/Checkpoints/libero/libero_qwenoft_mip_dino_fdm_state7_100k/checkpoints/steps_60000_pytorch_model.pt
 
 your_ckpt=${1:-${CKPT:-${DEFAULT_CKPT}}}
 task_suite_name=${2:-${TASK_SUITE_NAME:-libero_goal}}
@@ -124,6 +124,7 @@ env "${STANDALONE_ENV_CLEANUP[@]}" \
     "${starVLA_python}" deployment/model_server/server_policy.py \
     --ckpt_path "${your_ckpt}" \
     --port "${base_port}" \
+    --seed "${eval_seed}" \
     --use_bf16 \
     > "${server_log}" 2>&1 &
 server_pid=$!

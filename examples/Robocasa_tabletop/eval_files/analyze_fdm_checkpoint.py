@@ -44,7 +44,7 @@ from starVLA.dataloader.lerobot_datasets import make_LeRobotSingleDataset
 
 
 CHECKPOINT = (
-    "/root/tianyi/starVLA/playground/Checkpoints/robocasa/"
+    "/root/htq/starVLA/playground/Checkpoints/robocasa/"
     "robocasa_qwenoft_mip_dino_fdm_state58_200k/checkpoints/steps_180000_pytorch_model.pt"
 )
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-STARVLA_DIR=${STARVLA_DIR:-/root/tianyi/code/starVLA}
-LIBERO_PLUS_HOME=${LIBERO_PLUS_HOME:-/root/tianyi/code/LIBERO-plus}
+STARVLA_DIR=${STARVLA_DIR:-/root/htq/code/starVLA}
+LIBERO_PLUS_HOME=${LIBERO_PLUS_HOME:-/root/htq/code/LIBERO-plus}
 LIBERO_PLUS_VENV=${LIBERO_PLUS_VENV:-${LIBERO_PLUS_HOME}/.venv}
 LIBERO_PLUS_REPO=${LIBERO_PLUS_REPO:-https://github.com/sylvestf/LIBERO-plus.git}
 PYTHON_VERSION=${PYTHON_VERSION:-3.10}

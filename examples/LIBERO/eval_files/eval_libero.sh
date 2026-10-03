@@ -2,13 +2,13 @@
 set -euo pipefail
 
 # === Paths (adapted for this workspace) ===
-STARVLA_DIR=${STARVLA_DIR:-/root/tianyi/code/starVLA}
-LIBERO_HOME=${LIBERO_HOME:-/root/tianyi/code/LIBERO}
-LIBERO_Python=${LIBERO_PYTHON:-/root/tianyi/code/LIBERO/.venv/bin/python}
+STARVLA_DIR=${STARVLA_DIR:-/root/htq/code/starVLA}
+LIBERO_HOME=${LIBERO_HOME:-/root/htq/code/LIBERO}
+LIBERO_Python=${LIBERO_PYTHON:-/root/htq/code/LIBERO/.venv/bin/python}
 
 cd "${STARVLA_DIR}"
 # === Checkpoint ===
-CKPT=${CKPT:-/root/tianyi/starVLA/playground/Pretrained_models/Qwen3-VL-OFT-LIBERO-4in1/checkpoints/steps_50000_pytorch_model.pt}
+CKPT=${CKPT:-/root/htq/starVLA/playground/Checkpoints/libero/libero_qwenoft_mip_dino_fdm_state7_100k/checkpoints/steps_60000_pytorch_model.pt}
 
 ###########################################################################################
 # === Please modify the following paths according to your environment ===

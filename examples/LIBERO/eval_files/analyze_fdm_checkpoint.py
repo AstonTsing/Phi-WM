@@ -56,7 +56,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--checkpoint",
         default=(
-            "/root/tianyi/starVLA/playground/Checkpoints/libero/"
+            "/root/htq/starVLA/playground/Checkpoints/libero/"
             "libero_qwenoft_mip_dino_fdm_state7_100k/checkpoints/steps_60000_pytorch_model.pt"
         ),
     )

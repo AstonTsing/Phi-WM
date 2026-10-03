@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-STARVLA_DIR=${STARVLA_DIR:-/root/tianyi/code/starVLA}
+STARVLA_DIR=${STARVLA_DIR:-/root/htq/code/starVLA}
 SCRIPT_PATH=${SCRIPT_PATH:-${STARVLA_DIR}/examples/LIBERO/eval_files/auto_eval_scripts/eval_libero_parall.sh}
 
 cd "${STARVLA_DIR}"
 
-DEFAULT_CKPT=/root/tianyi/starVLA/playground/Pretrained_models/Qwen3-VL-OFT-LIBERO-4in1/checkpoints/steps_50000_pytorch_model.pt
+DEFAULT_CKPT=/root/htq/starVLA/playground/Checkpoints/libero/libero_qwenoft_mip_dino_fdm_state7_100k/checkpoints/steps_60000_pytorch_model.pt
 
 # Environment-variable friendly configuration for training platforms:
 #   CKPT_PATHS_STR="ckpt1 ckpt2"

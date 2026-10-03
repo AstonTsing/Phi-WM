@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-STARVLA_DIR=${STARVLA_DIR:-/root/tianyi/code/starVLA}
+STARVLA_DIR=${STARVLA_DIR:-/root/htq/code/starVLA}
+STARVLA_PYTHON=${STARVLA_PYTHON:-/root/htq/code/LDA-1B/.venv/bin/python}
 SCRIPT_PATH=${SCRIPT_PATH:-${STARVLA_DIR}/examples/LIBERO-plus/eval_files/parallel_eval/eval_libero_plus_slice.sh}
 
 cd "${STARVLA_DIR}"
 
-DEFAULT_CKPT=/root/tianyi/starVLA/playground/Pretrained_models/Qwen3-VL-OFT-LIBERO-4in1/checkpoints/steps_50000_pytorch_model.pt
+DEFAULT_CKPT=/root/htq/starVLA/playground/Checkpoints/libero/libero_qwenoft_mip_dino_fdm_state7_100k/checkpoints/steps_60000_pytorch_model.pt
 
 CKPT_DIR=${CKPT_DIR:-}
 CKPT_PATHS_STR=${CKPT_PATHS_STR:-${CKPT:-${DEFAULT_CKPT}}}
@@ -15,6 +16,7 @@ GPU_LIST_STR=${GPU_LIST_STR:-"0 1 2 3 4 5 6 7"}
 SUITE_SLICES_STR=${SUITE_SLICES_STR:-"4 2 1 1"}
 BASE_PORT=${BASE_PORT:-6550}
 NUM_TRIALS_PER_TASK=${NUM_TRIALS_PER_TASK:-1}
+LIBERO_EVAL_SEED=${LIBERO_EVAL_SEED:-7}
 MAX_TASKS_PER_SUITE=${MAX_TASKS_PER_SUITE:--1}
 SAVE_VIDEOS=${SAVE_VIDEOS:-false}
 RUN_ID=${RUN_ID:-$(date +"%Y%m%d_%H%M%S")}
@@ -77,6 +79,7 @@ echo " Suite slices      : ${SUITE_SLICES[*]}"
 echo " GPU list          : ${GPU_LIST[*]}"
 echo " Base port         : ${BASE_PORT}"
 echo " Trials/task       : ${NUM_TRIALS_PER_TASK}"
+echo " Seed              : ${LIBERO_EVAL_SEED}"
 echo " Max tasks/suite   : ${MAX_TASKS_PER_SUITE}"
 echo " Save videos       : ${SAVE_VIDEOS}"
 echo " Run id            : ${RUN_ID}"
@@ -169,6 +172,7 @@ for ckpt in "${CKPT_LIST[@]}"; do
 
         echo "[Job ${job_idx}/${total_jobs}] GPU=${gpu_id} port=${port} suite=${suite} slice=[${start_idx},${end_idx})"
         NUM_TRIALS_PER_TASK="${NUM_TRIALS_PER_TASK}" \
+        LIBERO_EVAL_SEED="${LIBERO_EVAL_SEED}" \
         SAVE_VIDEOS="${SAVE_VIDEOS}" \
         bash "${SCRIPT_PATH}" "${ckpt}" "${suite}" "${gpu_id}" "${port}" "${start_idx}" "${end_idx}" "${output_dir}" &
         pid=$!
@@ -187,7 +191,7 @@ for ckpt in "${CKPT_LIST[@]}"; do
     cleanup_pids=()
 
     echo "--- Aggregating LIBERO-plus results for ${ckpt_name} ---"
-    /root/tianyi/code/LDA-1B/.venv/bin/python \
+    "${STARVLA_PYTHON}" \
         ./examples/LIBERO-plus/eval_files/parallel_eval/aggregate_results.py \
         --root_path "${output_dir}"
     echo "Aggregated results: ${output_dir}/overall_results.json"

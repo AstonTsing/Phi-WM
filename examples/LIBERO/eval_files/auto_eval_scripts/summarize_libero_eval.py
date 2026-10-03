@@ -3,10 +3,10 @@
 
 Usage examples:
   python examples/LIBERO/eval_files/auto_eval_scripts/summarize_libero_eval.py \
-    /root/tianyi/starVLA/playground/Checkpoints/libero/libero_phiwam_agra
+    /root/htq/starVLA/playground/Checkpoints/libero/libero_phiwam_agra
 
   python examples/LIBERO/eval_files/auto_eval_scripts/summarize_libero_eval.py \
-    /root/tianyi/starVLA/playground/Checkpoints/libero/libero_phiwam_agra/checkpoints/steps_40000_pytorch_model.pt
+    /root/htq/starVLA/playground/Checkpoints/libero/libero_phiwam_agra/checkpoints/steps_40000_pytorch_model.pt
 """
 
 from __future__ import annotations
@@ -186,7 +186,7 @@ def main() -> None:
         "path",
         type=Path,
         help="Checkpoint path, checkpoint directory, run root, or parent directory containing LIBERO eval logs.",
-        # default="/root/tianyi/starVLA/playground/Checkpoints/libero",
+        # default="/root/htq/starVLA/playground/Checkpoints/libero",
     )
     args = parser.parse_args()
 

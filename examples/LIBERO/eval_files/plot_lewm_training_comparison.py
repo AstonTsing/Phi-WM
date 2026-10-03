@@ -31,21 +31,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--original-log",
         default=(
-            "/root/tianyi/starVLA/playground/Checkpoints/libero/"
+            "/root/htq/starVLA/playground/Checkpoints/libero/"
             "libero_qwenoft_mip_dino_fdm_state7_100k/train.log"
         ),
     )
     parser.add_argument(
         "--lewm-metrics",
         default=(
-            "/root/tianyi/starVLA/playground/Checkpoints/libero/"
+            "/root/htq/starVLA/playground/Checkpoints/libero/"
             "libero_acteffect_lewm_state7_100k/metrics.jsonl"
         ),
     )
     parser.add_argument(
         "--output-dir",
         default=(
-            "/root/tianyi/starVLA/playground/Checkpoints/libero/"
+            "/root/htq/starVLA/playground/Checkpoints/libero/"
             "libero_acteffect_lewm_state7_100k/training_comparison_vs_original"
         ),
     )
